@@ -31,7 +31,7 @@ Use lines strictly less than '"$line_too_long"' characters in C++ code.'
 
 #-----------------------------------------------------------------------------
 
-# Check that developmer setup is up-to-date.
+# Check that development setup is up-to-date.
 lastSetupForDevelopment=$(git config --get hooks.SetupForDevelopment || echo 0)
 eval $(grep '^SetupForDevelopment_VERSION=' "${BASH_SOURCE%/*}/../SetupForDevelopment.sh")
 test -n "$SetupForDevelopment_VERSION" || SetupForDevelopment_VERSION=0
