@@ -75,9 +75,9 @@ int cmCPackProductBuildGenerator::PackageFiles()
 
   std::string version = this->GetOption("CPACK_PACKAGE_VERSION");
   std::string productbuild = this->GetOption("CPACK_COMMAND_PRODUCTBUILD");
-  std::string identityName =
+  const char* identityName =
     this->GetOption("CPACK_PRODUCTBUILD_IDENTITY_NAME");
-  std::string keychainPath =
+  const char* keychainPath =
     this->GetOption("CPACK_PRODUCTBUILD_KEYCHAIN_PATH");
 
   pkgCmd << productbuild << " --distribution \"" << packageDirFileName
@@ -86,9 +86,8 @@ int cmCPackProductBuildGenerator::PackageFiles()
          << "\""
          << " --resources \"" << resDir << "\""
          << " --version \"" << version << "\""
-         << (identityName.empty() ? "" : " --sign \"" + identityName + "\"")
-         << (keychainPath.empty() ? ""
-                                  : " --keychain \"" + keychainPath + "\"")
+         << (identityName ? " --sign \"" + identityName + "\"" : "")
+         << (keychainPath ? " --keychain \"" + keychainPath + "\"" : "")
          << " \"" << packageFileNames[0] << "\"";
 
   // Run ProductBuild
@@ -200,17 +199,16 @@ bool cmCPackProductBuildGenerator::GenerateComponentPackage(
 
   std::string version = this->GetOption("CPACK_PACKAGE_VERSION");
   std::string pkgbuild = this->GetOption("CPACK_COMMAND_PKGBUILD");
-  std::string identityName = this->GetOption("CPACK_PKGBUILD_IDENTITY_NAME");
-  std::string keychainPath = this->GetOption("CPACK_PKGBUILD_KEYCHAIN_PATH");
+  const char* identityName = this->GetOption("CPACK_PKGBUILD_IDENTITY_NAME");
+  const char* keychainPath = this->GetOption("CPACK_PKGBUILD_KEYCHAIN_PATH");
 
   pkgCmd << pkgbuild << " --root \"" << packageDir << "\""
          << " --identifier \"" << pkgId << "\""
          << " --scripts \"" << scriptDir << "\""
          << " --version \"" << version << "\""
          << " --install-location \"/\""
-         << (identityName.empty() ? "" : " --sign \"" + identityName + "\"")
-         << (keychainPath.empty() ? ""
-                                  : " --keychain \"" + keychainPath + "\"")
+         << (identityName ? " --sign \"" + identityName + "\"" : "")
+         << (keychainPath ? " --keychain \"" + keychainPath + "\"" : "")
          << " \"" << packageFile << "\"";
 
   // Run ProductBuild
