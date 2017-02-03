@@ -356,7 +356,7 @@ macro( _HDF5_parse_compile_line
     elseif("${arg}" MATCHES "^-L(.*)$")
       # library search path
       list(APPEND ${library_paths} "${CMAKE_MATCH_1}")
-    elseif("${arg}" MATCHES "^-l(.*)hl$")
+    elseif("${arg}" MATCHES "^-l(hdf5.*hl.*)$")
       # library name (hl)
       list(APPEND ${libraries_hl} "${CMAKE_MATCH_1}")
     elseif("${arg}" MATCHES "^-l(.*)$")
@@ -371,7 +371,7 @@ macro( _HDF5_parse_compile_line
       get_filename_component(_HDF5_LNAME "${arg}" NAME_WE)
       string(REGEX REPLACE "^lib" "" _HDF5_LNAME "${_HDF5_LNAME}")
       list(APPEND ${library_paths} "${_HDF5_LPATH}")
-      if(_HDF5_LNAME MATCHES ".*hl")
+      if(_HDF5_LNAME MATCHES "hdf5.*hl")
         list(APPEND ${libraries_hl} "${_HDF5_LNAME}")
       else()
         list(APPEND ${libraries} "${_HDF5_LNAME}")
@@ -518,28 +518,26 @@ if(NOT HDF5_FOUND)
           )
           set(HDF5_${__lang}_LIBRARIES)
 
-          set(_HDF5_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
-          if(HDF5_USE_STATIC_LIBRARIES)
-            set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX})
-          else()
-            set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX})
-          endif()
-
           foreach(L IN LISTS HDF5_${__lang}_LIBRARY_NAMES)
+            set(_HDF5_SEARCH_NAMES_LOCAL)
             if(x"${L}" MATCHES "hdf5")
               # hdf5 library
               set(_HDF5_SEARCH_OPTS_LOCAL ${_HDF5_SEARCH_OPTS})
+              if(UNIX AND HDF5_USE_STATIC_LIBRARIES)
+                set(_HDF5_SEARCH_NAMES_LOCAL lib${L}.a)
+              endif()
             else()
               # external library
               set(_HDF5_SEARCH_OPTS_LOCAL)
             endif()
             find_library(HDF5_${__lang}_LIBRARY_${L}
-              NAMES ${L}
+              NAMES ${_HDF5_SEARCH_NAMES_LOCAL} ${L} NAMES_PER_DIR
               HINTS ${HDF5_${__lang}_LIBRARY_DIRS}
                     ${HDF5_ROOT}
               ${_HDF5_SEARCH_OPTS_LOCAL}
               )
             unset(_HDF5_SEARCH_OPTS_LOCAL)
+            unset(_HDF5_SEARCH_NAMES_LOCAL)
             if(HDF5_${__lang}_LIBRARY_${L})
               list(APPEND HDF5_${__lang}_LIBRARIES ${HDF5_${__lang}_LIBRARY_${L}})
             else()
@@ -549,20 +547,25 @@ if(NOT HDF5_FOUND)
           if(FIND_HL)
             set(HDF5_${__lang}_HL_LIBRARIES)
             foreach(L IN LISTS HDF5_${__lang}_HL_LIBRARY_NAMES)
+              set(_HDF5_SEARCH_NAMES_LOCAL)
               if("x${L}" MATCHES "hdf5")
                 # hdf5 library
                 set(_HDF5_SEARCH_OPTS_LOCAL ${_HDF5_SEARCH_OPTS})
+                if(UNIX AND HDF5_USE_STATIC_LIBRARIES)
+                  set(_HDF5_SEARCH_NAMES_LOCAL lib${L}.a)
+                endif()
               else()
                 # external library
                 set(_HDF5_SEARCH_OPTS_LOCAL)
               endif()
               find_library(HDF5_${__lang}_LIBRARY_${L}
-                NAMES ${L}
+                NAMES ${_HDF5_SEARCH_NAMES_LOCAL} ${L} NAMES_PER_DIR
                 HINTS ${HDF5_${__lang}_LIBRARY_DIRS}
                       ${HDF5_ROOT}
                 ${_HDF5_SEARCH_OPTS_LOCAL}
                 )
               unset(_HDF5_SEARCH_OPTS_LOCAL)
+              unset(_HDF5_SEARCH_NAMES_LOCAL)
               if(HDF5_${__lang}_LIBRARY_${L})
                 list(APPEND HDF5_${__lang}_HL_LIBRARIES ${HDF5_${__lang}_LIBRARY_${L}})
               else()
@@ -571,8 +574,6 @@ if(NOT HDF5_FOUND)
             endforeach()
             set(HDF5_HL_FOUND True)
           endif()
-
-          set(CMAKE_FIND_LIBRARY_SUFFIXES ${_HDF5_CMAKE_FIND_LIBRARY_SUFFIXES})
 
           set(HDF5_${__lang}_FOUND True)
           mark_as_advanced(HDF5_${__lang}_DEFINITIONS)
