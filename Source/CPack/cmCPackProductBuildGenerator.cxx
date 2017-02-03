@@ -85,17 +85,11 @@ int cmCPackProductBuildGenerator::PackageFiles()
          << " --package-path \"" << packageDirFileName << "/Contents/Packages"
          << "\""
          << " --resources \"" << resDir << "\""
-         << " --version \"" << version << "\"";
-
-  if (!identityName.empty()) {
-    pkgCmd << " --sign \"" << identityName << "\"";
-  }
-
-  if (!keychainPath.empty()) {
-    pkgCmd << " --keychain \"" << keychainPath << "\"";
-  }
-
-  pkgCmd << " \"" << packageFileNames[0] << "\"";
+         << " --version \"" << version << "\""
+         << (identityName.empty() ? "" : " --sign \"" + identityName + "\"")
+         << (keychainPath.empty() ? ""
+                                  : " --keychain \"" + keychainPath + "\"")
+         << " \"" << packageFileNames[0] << "\"";
 
   // Run ProductBuild
   return RunProductBuild(pkgCmd.str());
@@ -213,17 +207,11 @@ bool cmCPackProductBuildGenerator::GenerateComponentPackage(
          << " --identifier \"" << pkgId << "\""
          << " --scripts \"" << scriptDir << "\""
          << " --version \"" << version << "\""
-         << " --install-location \"/\"";
-
-  if (!identityName.empty()) {
-    pkgCmd << " --sign \"" << identityName << "\"";
-  }
-
-  if (!keychainPath.empty()) {
-    pkgCmd << " --keychain \"" << keychainPath << "\"";
-  }
-
-  pkgCmd << " \"" << packageFile << "\"";
+         << " --install-location \"/\""
+         << (identityName.empty() ? "" : " --sign \"" + identityName + "\"")
+         << (keychainPath.empty() ? ""
+                                  : " --keychain \"" + keychainPath + "\"")
+         << " \"" << packageFile << "\"";
 
   // Run ProductBuild
   return RunProductBuild(pkgCmd.str());
