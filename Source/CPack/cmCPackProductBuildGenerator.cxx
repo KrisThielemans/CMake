@@ -75,6 +75,10 @@ int cmCPackProductBuildGenerator::PackageFiles()
 
   std::string version = this->GetOption("CPACK_PACKAGE_VERSION");
   std::string productbuild = this->GetOption("CPACK_COMMAND_PRODUCTBUILD");
+  const char* identityName =
+    this->GetOption("CPACK_PRODUCTBUILD_IDENTITY_NAME");
+  const char* keychainPath =
+    this->GetOption("CPACK_PRODUCTBUILD_KEYCHAIN_PATH");
 
   pkgCmd << productbuild << " --distribution \"" << packageDirFileName
          << "/Contents/distribution.dist\""
@@ -82,6 +86,8 @@ int cmCPackProductBuildGenerator::PackageFiles()
          << "\""
          << " --resources \"" << resDir << "\""
          << " --version \"" << version << "\""
+         << (identityName ? " --sign \"" + identityName + "\"" : "")
+         << (keychainPath ? " --keychain \"" + keychainPath + "\"" : "")
          << " \"" << packageFileNames[0] << "\"";
 
   // Run ProductBuild
@@ -193,12 +199,16 @@ bool cmCPackProductBuildGenerator::GenerateComponentPackage(
 
   std::string version = this->GetOption("CPACK_PACKAGE_VERSION");
   std::string pkgbuild = this->GetOption("CPACK_COMMAND_PKGBUILD");
+  const char* identityName = this->GetOption("CPACK_PKGBUILD_IDENTITY_NAME");
+  const char* keychainPath = this->GetOption("CPACK_PKGBUILD_KEYCHAIN_PATH");
 
   pkgCmd << pkgbuild << " --root \"" << packageDir << "\""
          << " --identifier \"" << pkgId << "\""
          << " --scripts \"" << scriptDir << "\""
          << " --version \"" << version << "\""
          << " --install-location \"/\""
+         << (identityName ? " --sign \"" + identityName + "\"" : "")
+         << (keychainPath ? " --keychain \"" + keychainPath + "\"" : "")
          << " \"" << packageFile << "\"";
 
   // Run ProductBuild
