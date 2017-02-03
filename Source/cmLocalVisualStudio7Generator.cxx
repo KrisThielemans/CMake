@@ -273,7 +273,7 @@ cmSourceFile* cmLocalVisualStudio7Generator::CreateVCProjBuildRule()
     cmSystemTools::CollapseFullPath(stampName.c_str());
   this->Makefile->AddCustomCommandToOutput(
     fullpathStampName.c_str(), listFiles, makefileIn.c_str(), commandLines,
-    comment.c_str(), no_working_directory, true);
+    comment.c_str(), no_working_directory, true, false);
   if (cmSourceFile* file = this->Makefile->GetSource(makefileIn.c_str())) {
     return file;
   } else {

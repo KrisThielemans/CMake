@@ -310,7 +310,7 @@ bool cmGlobalVisualStudio8Generator::AddCheckTarget()
     std::vector<std::string> no_byproducts;
     if (cmSourceFile* file = mf->AddCustomCommandToOutput(
           stamps, no_byproducts, listFiles, no_main_dependency, commandLines,
-          "Checking Build System", no_working_directory, true)) {
+          "Checking Build System", no_working_directory, true, false)) {
       gt->AddSource(file->GetFullPath());
     } else {
       cmSystemTools::Error("Error adding rule for ", stamps[0].c_str());
