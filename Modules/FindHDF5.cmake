@@ -356,7 +356,7 @@ macro( _HDF5_parse_compile_line
     elseif("${arg}" MATCHES "^-L(.*)$")
       # library search path
       list(APPEND ${library_paths} "${CMAKE_MATCH_1}")
-    elseif("${arg}" MATCHES "^-l(.*)hl$")
+    elseif("${arg}" MATCHES "^-l(hdf5.*hl.*)$")
       # library name (hl)
       list(APPEND ${libraries_hl} "${CMAKE_MATCH_1}")
     elseif("${arg}" MATCHES "^-l(.*)$")
@@ -371,7 +371,7 @@ macro( _HDF5_parse_compile_line
       get_filename_component(_HDF5_LNAME "${arg}" NAME_WE)
       string(REGEX REPLACE "^lib" "" _HDF5_LNAME "${_HDF5_LNAME}")
       list(APPEND ${library_paths} "${_HDF5_LPATH}")
-      if(_HDF5_LNAME MATCHES ".*hl")
+      if(_HDF5_LNAME MATCHES "hdf5.*hl")
         list(APPEND ${libraries_hl} "${_HDF5_LNAME}")
       else()
         list(APPEND ${libraries} "${_HDF5_LNAME}")
