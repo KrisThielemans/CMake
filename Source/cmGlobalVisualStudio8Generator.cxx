@@ -298,7 +298,7 @@ bool cmGlobalVisualStudio8Generator::AddCheckTarget()
     commandLine.push_back("--check-stamp-list");
     commandLine.push_back(stampList.c_str());
     commandLine.push_back("--vs-solution-file");
-    commandLine.push_back("\"$(SolutionPath)\"");
+    commandLine.push_back("$(SolutionPath)");
     cmCustomCommandLines commandLines;
     commandLines.push_back(commandLine);
 
